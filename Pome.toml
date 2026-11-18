@@ -1,0 +1,5 @@
+[pome]
+# Replace with the source path of your repository (e.g. github.com/alice/interpreter-in-emela).
+name = "github.com/yuni-shinogami/interpreter-in-emela"
+version = "0.1.0"
+emela = "0.27.1"

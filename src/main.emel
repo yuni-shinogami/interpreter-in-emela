@@ -1,0 +1,8 @@
+import Std.Console.{Console, SystemConsole}
+
+fn main() {
+  with SystemConsole {
+    console = use Console
+    console.print_line("Hello, world!")
+  }
+}
