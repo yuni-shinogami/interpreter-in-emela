@@ -10,7 +10,7 @@ import Token.{
   LParen,
   RParen,
   LBrace,
-  RBrace
+  RBrace,
 }
 
 pub type Lexer(rest: List[String])
