@@ -1,4 +1,17 @@
-import Token.{Token, Illegal, Eof, Assign, Plus, Comma, Semicolon, LParen, RParen, LBrace, RBrace}
+import Token.{
+  Token,
+  Illegal,
+  Eof,
+  Int,
+  Assign,
+  Plus,
+  Comma,
+  Semicolon,
+  LParen,
+  RParen,
+  LBrace,
+  RBrace
+}
 
 pub type Lexer(rest: List[String])
 
@@ -7,8 +20,17 @@ pub fn new(input: String) -> Lexer {
 }
 
 pub fn next_token(lexer: Lexer) -> (Token, Lexer) {
-  lexer.rest match {
-    [] -> (Eof, lexer)
+  (_, chars) = read_while(lexer.rest, is_whitespace)
+  chars match {
+    []           -> (Eof, Lexer(rest: chars))
+    [ch, ..] if is_letter(ch) -> {
+      (word, rest) = read_while(chars, is_letter)
+      (Token.lookup_ident(String.concat(word)), Lexer(rest:))
+    }
+    [ch, ..] if is_digit(ch) -> {
+      (digits, rest) = read_while(chars, is_digit)
+      (number(String.concat(digits)), Lexer(rest:))
+    }
     [ch, ..rest] -> (symbol(ch), Lexer(rest:))
   }
 }
@@ -23,6 +45,34 @@ fn symbol(ch: String) -> Token {
     ")" -> RParen
     "{" -> LBrace
     "}" -> RBrace
-    _ -> Illegal(ch)
+    _   -> Illegal(ch)
+  }
+}
+
+fn number(text: String) -> Token {
+  Int(Int.parse(text)) escape {
+    _ -> Illegal(text)
+  }
+}
+
+fn is_whitespace(ch: String) -> Bool {
+  ch == " " || ch == "\t" || ch == "\n" || ch == "\r"
+}
+
+fn is_letter(ch: String) -> Bool {
+  (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch == "_"
+}
+
+fn is_digit(ch: String) -> Bool {
+  ch >= "0" && ch <= "9"
+}
+
+fn read_while(chars: List[String], f: fn(String) -> Bool) -> (List[String], List[String]) {
+  chars match {
+    [ch, ..rest] if f(ch) -> {
+      (word, after) = read_while(rest, f)
+      ([ch, ..word], after)
+    }
+    _ -> ([], chars)
   }
 }

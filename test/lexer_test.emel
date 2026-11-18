@@ -1,15 +1,77 @@
 import Lexer
-import Token.{Illegal, Eof, Assign, Plus, Comma, Semicolon, LParen, RParen, LBrace, RBrace}
+import Token.{
+  Eof,
+  Ident,
+  Int,
+  Assign,
+  Plus,
+  Comma,
+  Semicolon,
+  LParen,
+  RParen,
+  LBrace,
+  RBrace,
+  Function,
+  Let,
+}
 
 @test
 fn next_token() {
-  input = "=+(){},;"
-  expected = [Assign, Plus, LParen, RParen, LBrace, RBrace, Comma, Semicolon, Eof]
+  input = """
+    let five = 5;
+    let ten = 10;
+
+    let add = fn(x, y) {
+      x + y;
+    };
+
+    let result = add(five, ten);
+    """
+
+  expected = [
+    Let,
+    Ident("five"),
+    Assign,
+    Int(5),
+    Semicolon,
+    Let,
+    Ident("ten"),
+    Assign,
+    Int(10),
+    Semicolon,
+    Let,
+    Ident("add"),
+    Assign,
+    Function,
+    LParen,
+    Ident("x"),
+    Comma,
+    Ident("y"),
+    RParen,
+    LBrace,
+    Ident("x"),
+    Plus,
+    Ident("y"),
+    Semicolon,
+    RBrace,
+    Semicolon,
+    Let,
+    Ident("result"),
+    Assign,
+    Ident("add"),
+    LParen,
+    Ident("five"),
+    Comma,
+    Ident("ten"),
+    RParen,
+    Semicolon,
+    Eof,
+  ]
 
   lexer = Lexer.new(input)
   List.fold(expected, lexer, |lexer, want| {
     (token, next) = Lexer.next_token(lexer)
-    assert(token == want)
+    assert (token == want)
     next
   })
 }
