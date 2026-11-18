@@ -1,0 +1,28 @@
+import Token.{Token, Illegal, Eof, Assign, Plus, Comma, Semicolon, LParen, RParen, LBrace, RBrace}
+
+pub type Lexer(rest: List[String])
+
+pub fn new(input: String) -> Lexer {
+  Lexer(rest: String.chars(input))
+}
+
+pub fn next_token(lexer: Lexer) -> (Token, Lexer) {
+  lexer.rest match {
+    [] -> (Eof, lexer)
+    [ch, ..rest] -> (symbol(ch), Lexer(rest:))
+  }
+}
+
+fn symbol(ch: String) -> Token {
+  ch match {
+    "=" -> Assign
+    "+" -> Plus
+    "," -> Comma
+    ";" -> Semicolon
+    "(" -> LParen
+    ")" -> RParen
+    "{" -> LBrace
+    "}" -> RBrace
+    _ -> Illegal(ch)
+  }
+}

@@ -1,0 +1,15 @@
+import Lexer
+import Token.{Illegal, Eof, Assign, Plus, Comma, Semicolon, LParen, RParen, LBrace, RBrace}
+
+@test
+fn next_token() {
+  input = "=+(){},;"
+  expected = [Assign, Plus, LParen, RParen, LBrace, RBrace, Comma, Semicolon, Eof]
+
+  lexer = Lexer.new(input)
+  List.fold(expected, lexer, |lexer, want| {
+    (token, next) = Lexer.next_token(lexer)
+    assert(token == want)
+    next
+  })
+}
